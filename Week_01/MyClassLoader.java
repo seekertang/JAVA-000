@@ -31,6 +31,9 @@ public class MyClassLoader extends ClassLoader {
             finalBytes[i] = (byte) (255 - finalBytes[i]);
         }
 
+        //need close the resources
+        inputStream.close();
+
         return defineClass("Hello",finalBytes, 0, byteNumber);
     }
 
