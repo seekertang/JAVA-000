@@ -1,5 +1,7 @@
 package ethan.gateway.inbound;
 
+import ethan.gateway.filter.HttpRequestFilter;
+import ethan.gateway.filter.MyHttpRequestFilterImpl;
 import ethan.gateway.outbound.httpclient4.HttpOutboundHandler;
 import ethan.gateway.outbound.okhttp.OkhttpOutboundHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -15,11 +17,13 @@ public class HttpInboundHandler extends ChannelInboundHandlerAdapter {
     private final String proxyServer;
     //private HttpOutboundHandler handler;
     private OkhttpOutboundHandler handler;
+    private HttpRequestFilter requestFilter;
     
     public HttpInboundHandler(String proxyServer) {
         this.proxyServer = proxyServer;
         //handler = new HttpOutboundHandler(this.proxyServer);
         handler = new OkhttpOutboundHandler(this.proxyServer);
+        this.requestFilter = new MyHttpRequestFilterImpl();
 
     }
     
@@ -38,6 +42,8 @@ public class HttpInboundHandler extends ChannelInboundHandlerAdapter {
 //            if (uri.contains("/test")) {
 //                handlerTest(fullRequest, ctx);
 //            }
+
+            requestFilter.filter(fullRequest, ctx);
     
             handler.handle(fullRequest, ctx);
     

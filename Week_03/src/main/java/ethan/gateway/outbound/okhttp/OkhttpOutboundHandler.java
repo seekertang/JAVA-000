@@ -10,6 +10,8 @@ import io.netty.handler.codec.http.HttpUtil;
 import okhttp3.*;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.NO_CONTENT;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
@@ -28,7 +30,16 @@ public class OkhttpOutboundHandler {
          final OkHttpClient client = new OkHttpClient();
 
          //create a request
-         final Request request = new Request.Builder().get().url(url).build();
+         Request.Builder requestBuilder = new Request.Builder();
+
+         //copy Headers
+         Iterator<Map.Entry<String, String>> entryIterator = httpRequest.headers().iteratorAsString();
+         while(entryIterator.hasNext()) {
+             Map.Entry<String, String> next = entryIterator.next();
+             requestBuilder.addHeader(next.getKey(), next.getValue());
+         }
+
+         final Request request = requestBuilder.url(url).build();
 
          //fire a AsyncCall request
          client.newCall(request).enqueue(new Callback() {
