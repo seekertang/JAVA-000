@@ -2,7 +2,6 @@ package ethan.gateway.inbound;
 
 import ethan.gateway.filter.HttpRequestFilter;
 import ethan.gateway.filter.MyHttpRequestFilterImpl;
-import ethan.gateway.outbound.httpclient4.HttpOutboundHandler;
 import ethan.gateway.outbound.okhttp.OkhttpOutboundHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -11,18 +10,20 @@ import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class HttpInboundHandler extends ChannelInboundHandlerAdapter {
 
     private static Logger logger = LoggerFactory.getLogger(HttpInboundHandler.class);
-    private final String proxyServer;
+    private final List<String> proxyServers;
     //private HttpOutboundHandler handler;
     private OkhttpOutboundHandler handler;
     private HttpRequestFilter requestFilter;
     
-    public HttpInboundHandler(String proxyServer) {
-        this.proxyServer = proxyServer;
+    public HttpInboundHandler(List<String> proxyServers) {
+        this.proxyServers = proxyServers;
         //handler = new HttpOutboundHandler(this.proxyServer);
-        handler = new OkhttpOutboundHandler(this.proxyServer);
+        handler = new OkhttpOutboundHandler(this.proxyServers);
         this.requestFilter = new MyHttpRequestFilterImpl();
 
     }

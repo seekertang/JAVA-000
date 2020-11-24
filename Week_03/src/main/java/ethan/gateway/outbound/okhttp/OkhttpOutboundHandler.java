@@ -1,5 +1,6 @@
 package ethan.gateway.outbound.okhttp;
 
+import ethan.gateway.router.MyRandomHttpRouter;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -11,6 +12,7 @@ import okhttp3.*;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.NO_CONTENT;
@@ -18,15 +20,16 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 public class OkhttpOutboundHandler {
-    private String backendServer;
+    private List<String> backendServers;
 
-     public OkhttpOutboundHandler(String backendServer) {
-         this.backendServer = backendServer;
+     public OkhttpOutboundHandler(List<String> backendServers) {
+
+         this.backendServers = backendServers;
      }
 
      public void handle(FullHttpRequest httpRequest, ChannelHandlerContext ctx) {
 
-         String url = backendServer + httpRequest.uri();
+         String url = new MyRandomHttpRouter().route(backendServers) + httpRequest.uri();
          final OkHttpClient client = new OkHttpClient();
 
          //create a request
